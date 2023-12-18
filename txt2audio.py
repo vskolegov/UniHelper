@@ -1,9 +1,13 @@
 import torch
 import os
+from IPython.display import Audio, display
+import requests
+
 
 device = torch.device('cpu')
 torch.set_num_threads(4)
 local_file = 'model.pt'
+
 
 def wavprocess(message):
     model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
@@ -19,13 +23,13 @@ def wavprocess(message):
 
     return(audio)
 
-from IPython.display import Audio, display
+
 sample_rate = 48000
 audio = wavprocess('В недрах тундры выдры в г+етрах т+ырят в вёдра ядра кедров. Это я пишу для примера eee кстати, да. примера eee кстати, да. примера eee кстати, да. примера eee кстати, да.')
 display(Audio(audio, rate=sample_rate))
 
 
-import requests
+
 
 API_URL = "https://api-inference.huggingface.co/models/bond005/wav2vec2-mbart50-ru"
 headers = {"Authorization": "Bearer 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"}
