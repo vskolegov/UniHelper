@@ -55,8 +55,9 @@ def handle_text_input(message):
 # Message handler for audio input
 def handle_audio_input(message):
     # Download the audio file
-    audio_file = bot.get_file(message.voice.file_id)
-    audio_file.download('input_audio.ogg')
+    if message.voice and message.voice.file_id:
+        audio_file = bot.get_file(message.voice.file_id)
+        audio_file.download('input_audio.ogg')
 
     # Use audio_to_text module to convert audio to text
     audio_text = audio_to_text('input_audio.ogg')
