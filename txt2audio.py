@@ -9,7 +9,7 @@ torch.set_num_threads(4)
 local_file = 'model.pt'
 
 
-def wavprocess(message):
+def text_to_audio(message):
     model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
     model.to(device)
 
@@ -22,23 +22,3 @@ def wavprocess(message):
                             speaker=speaker)
 
     return(audio)
-
-
-sample_rate = 48000
-audio = wavprocess('В недрах тундры выдры в г+етрах т+ырят в вёдра ядра кедров. Это я пишу для примера eee кстати, да. примера eee кстати, да. примера eee кстати, да. примера eee кстати, да.')
-display(Audio(audio, rate=sample_rate))
-
-
-
-
-API_URL = "https://api-inference.huggingface.co/models/bond005/wav2vec2-mbart50-ru"
-headers = {"Authorization": "Bearer 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"}
-
-def query(filename):
-    with open(filename, "rb") as f:
-        data = f.read()
-    response = requests.post(API_URL, headers=headers, data=data)
-    return response.json()
-
-output = query("test.wav")
-print(output)
