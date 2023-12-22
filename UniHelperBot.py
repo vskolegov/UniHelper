@@ -4,39 +4,39 @@ from telebot import types
 from txt2audio import text_to_audio
 from audio2text import audio_to_text
 
-# Set up logging
+# Настройка логирования
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# Define the Telegram bot token
+# Определение токена для Telegram бота
 TOKEN = ''
 
-# Initialize the bot
+# Инициализация бота
 bot = telebot.TeleBot(TOKEN)
 
-# Define modes
+# Определение режимов
 TEXT_TO_AUDIO_MODE = 'text_to_audio'
 AUDIO_TO_TEXT_MODE = 'audio_to_text'
 
-# Initial mode
+# Текущий режим
 current_mode = TEXT_TO_AUDIO_MODE
 
-# Command handler for /start command
+# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, 'Welcome to the Text-to-Audio Bot!')
+    bot.reply_to(message, 'Добро пожаловать в бот Text-to-Audio!')
 
-# Command handler for /switchmode command
+# Обработчик команды /switchmode
 @bot.message_handler(commands=['switchmode'])
 def switch_mode(message):
     global current_mode
     if current_mode == TEXT_TO_AUDIO_MODE:
         current_mode = AUDIO_TO_TEXT_MODE
-        bot.reply_to(message, 'Switched to Audio-to-Text mode. Send me an audio message for conversion.')
+        bot.reply_to(message, 'Переключено в режим Audio-to-Text. Отправьте мне аудиосообщение для преобразования.')
     else:
         current_mode = TEXT_TO_AUDIO_MODE
-        bot.reply_to(message, 'Switched to Text-to-Audio mode. Send me text or a PDF file for conversion.')
+        bot.reply_to(message, 'Переключено в режим Text-to-Audio. Отправьте мне текст или файл PDF для преобразования.')
 
-# Message handler for text input or audio input based on the current mode
+# Обработчик сообщений для текстового ввода или аудиоввода в зависимости от текущего режима
 @bot.message_handler(func=lambda message: True)
 def handle_input(message):
     if current_mode == TEXT_TO_AUDIO_MODE:
@@ -44,28 +44,28 @@ def handle_input(message):
     elif current_mode == AUDIO_TO_TEXT_MODE:
         handle_audio_input(message)
 
-# Message handler for text input
+# Обработчик сообщений для текстового ввода
 def handle_text_input(message):
     text_input = message.text
-    # Replace the following line with the actual logic from your text_to_audio module
+    # Замените следующую строку на фактическую логику из вашего модуля text_to_audio
     audio_waveform = text_to_audio(text_input)
-    # Send the audio file to the user
+    # Отправить аудиофайл пользователю
     bot.send_voice(message.chat.id, audio_waveform)
 
-# Message handler for audio input
+# Обработчик сообщений для аудиоввода
 def handle_audio_input(message):
-    # Download the audio file
+    # Загрузка аудиофайла
     if message.voice and message.voice.file_id:
         audio_file = bot.get_file(message.voice.file_id)
         audio_file.download('input_audio.ogg')
 
-    # Use audio_to_text module to convert audio to text
+    # Использование модуля audio_to_text для преобразования аудио в текст
     audio_text = audio_to_text('input_audio.ogg')
 
-    # Replace the following line with the actual logic from your text_to_audio module
+    # Замените следующую строку на фактическую логику из вашего модуля text_to_audio
     audio_waveform = text_to_audio(audio_text)
-    # Send the audio file to the user
+    # Отправить аудиофайл пользователю
     bot.send_voice(message.chat.id, audio_waveform)
 
-# Polling loop to keep the bot running
+# Цикл опроса для продолжения работы бота
 bot.polling(none_stop=True)
